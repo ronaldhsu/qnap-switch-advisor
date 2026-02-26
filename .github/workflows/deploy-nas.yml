@@ -1,0 +1,21 @@
+name: Deploy to QNAP NAS
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: self-hosted   # 在 NAS 上的 Runner 執行
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Deploy to Web Station
+        run: |
+          DEST="/share/Web/qnap-switch-advisor"
+          mkdir -p "$DEST"
+          cp index.html "$DEST/"
+          cp products.js "$DEST/"
+          echo "✅ Deployed to $DEST at $(date)"
