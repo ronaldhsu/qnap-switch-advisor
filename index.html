@@ -6,6 +6,7 @@
 <title>QNAP Switch 產品顧問 | Product Advisor</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+<script src="products.js"></script>
 <style>
   :root {
     --bg: #080c14;
@@ -817,27 +818,61 @@ function removeTyping() {
   if (el) el.remove();
 }
 
-const SYSTEM_PROMPT = `You are an expert QNAP Switch product advisor. You have comprehensive knowledge of all QNAP Switch products including their specifications, features, and use cases.
+/**
+ * buildSystemPrompt()
+ * 自動從 products.js 中的 QNAP_PRODUCTS 建立系統提示詞。
+ * 未來只需修改 products.js，提示詞會自動更新，無需動此處。
+ */
+function buildSystemPrompt() {
+  // 1. 產品線清單
+  const productLines = QNAP_PRODUCTS.series.map(series => {
+    const modelList = series.models.map(m => {
+      let desc = `${m.model} (${m.ports}`;
+      if (m.uplink) desc += `, uplink: ${m.uplink}`;
+      if (m.poe)    desc += `, ${m.poe}`;
+      desc += ')';
+      return desc;
+    }).join('; ');
+    return `- ${series.name} (${series.management}): ${modelList}`;
+  }).join('\n');
+
+  // 2. 依 feature tag 自動彙整速度/PoE 索引
+  const byFeature = tag => QNAP_PRODUCTS.series
+    .flatMap(s => s.models.filter(m => m.features.includes(tag)).map(m => m.model));
+  const unique = arr => [...new Set(arr)];
+
+  const poeModels  = unique(byFeature('PoE').concat(byFeature('PoE+'), byFeature('PoE++')));
+  const g10Models  = unique(byFeature('10GbE').concat(byFeature('10GbE uplink')));
+  const g25Models  = unique(byFeature('25GbE'));
+  const g100Models = unique(byFeature('100GbE uplink'));
+
+  const speedIndex = [
+    poeModels.length  && `PoE Models: ${poeModels.join(', ')}`,
+    g10Models.length  && `10GbE Models: ${g10Models.join(', ')}`,
+    g25Models.length  && `25GbE Models: ${g25Models.join(', ')}`,
+    g100Models.length && `100GbE Uplink Models: ${g100Models.join(', ')}`
+  ].filter(Boolean).join('\n');
+
+  // 3. 管理類型說明
+  const mgmtLines = QNAP_PRODUCTS.series.map(s =>
+    `- ${s.management}: ${s.name} — ${s.description}`
+  ).join('\n');
+
+  return `You are an expert QNAP Switch product advisor. You have comprehensive knowledge of all QNAP Switch products including their specifications, features, and use cases.
 
 Key QNAP Switch product lines:
-- QSW series (Unmanaged): QSW-1105-5T (5-port 2.5GbE), QSW-2104-2T (4x2.5G+2x10G), QSW-308-1C (8xGbE+1x10G), QSW-308S (8xGbE+1x10G SFP+)
-- QSW-M series (Web Managed/L2): QSW-M408-4C (8x10G Base-T + 4x10G SFP+), QSW-M408S (8x10G + 4x SFP+), QSW-M1208-8C (12-port 10G), QSW-M3216R-8S8T (16x10G SFP+ + 8x10G Base-T), QSW-M7308R-4X (10/25GbE)
-- QGD series (Smart Edge/NDR): QGD-1600 (16-port GbE), QGD-1600P (16-port PoE GbE), QGD-1602 (16G+2x10G), QGD-1602P (PoE), QGD-3014-16PT (PoE+)
-- Industrial: QSW-M2116P-2T2S (16-port PoE, industrial grade)
+${productLines}
 
-PoE Models: QGD-1600P, QGD-1602P, QGD-3014-16PT, QSW-M2116P-2T2S
-10GbE Models: QSW-M408-4C, QSW-M408S, QSW-M1208-8C, QSW-M3216R-8S8T, QSW-2104-2T (uplink)
-25GbE Models: QSW-M7308R-4X
+${speedIndex}
 
 Management Types:
-- Unmanaged: QSW series (plug and play)
-- Web Managed (L2): QSW-M series (VLAN, QoS, link aggregation, RSTP)
-- Smart Edge: QGD series (runs QuTS hero OS, can run VMs/containers)
+${mgmtLines}
 
 Always respond in the same language as the user's question (Traditional Chinese or English).
 When comparing products, use a clear table format.
 When recommending, ask about use case if not clear, or give top 2-3 suggestions with reasoning.
 Keep responses concise and practical for general consumers.`;
+}
 
 // --- API Key management ---
 function getKey() { return localStorage.getItem('groq_api_key') || ''; }
@@ -877,7 +912,7 @@ window.addEventListener('DOMContentLoaded', function() {
   if (!getKey()) showKeyModal();
 });
 
-// --- Gemini API ---
+// --- Groq API ---
 async function sendMessage() {
   const input = document.getElementById('userInput');
   const text = input.value.trim();
@@ -907,7 +942,7 @@ async function sendMessage() {
         model: 'llama-3.3-70b-versatile',
         max_tokens: 1000,
         messages: [
-          { role: 'system', content: SYSTEM_PROMPT },
+          { role: 'system', content: buildSystemPrompt() },
           ...conversationHistory
         ]
       })
