@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QNAP Switch 產品顧問 | Product Advisor</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #080c14;
+    --surface: #0d1420;
+    --surface2: #111827;
+    --border: #1e2d42;
+    --accent: #00d4ff;
+    --accent2: #0066ff;
+    --accent-glow: rgba(0, 212, 255, 0.15);
+    --text: #e8f0fe;
+    --text-muted: #6b7fa3;
+    --user-bubble: #0a2040;
+    --ai-bubble: #0d1420;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  /* Subtle grid background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,212,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,212,255,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Header */
+  header {
+    position: relative;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 28px;
+    border-bottom: 1px solid var(--border);
+    background: rgba(8,12,20,0.95);
+    backdrop-filter: blur(12px);
+  }
+
+  .logo-group {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .logo-icon {
+    width: 38px;
+    height: 38px;
+    background: linear-gradient(135deg, var(--accent2), var(--accent));
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 14px;
+    color: white;
+    letter-spacing: -0.5px;
+    flex-shrink: 0;
+  }
+
+  .logo-text {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 17px;
+    letter-spacing: -0.3px;
+  }
+
+  .logo-text span {
+    color: var(--accent);
+  }
+
+  .logo-sub {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 1px;
+    font-weight: 300;
+  }
+
+  .lang-toggle {
+    display: flex;
+    gap: 6px;
+  }
+
+  .lang-btn {
+    padding: 6px 14px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text-muted);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-weight: 500;
+  }
+
+  .lang-btn.active {
+    background: var(--accent);
+    color: var(--bg);
+    border-color: var(--accent);
+    font-weight: 600;
+  }
+
+  /* Chat area */
+  .chat-wrapper {
+    flex: 1;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    z-index: 1;
+  }
+
+  #chat {
+    flex: 1;
+    overflow-y: auto;
+    padding: 28px 20px;
+    scroll-behavior: smooth;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  #chat::-webkit-scrollbar { width: 4px; }
+  #chat::-webkit-scrollbar-track { background: transparent; }
+  #chat::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+  /* Welcome screen */
+  .welcome {
+    max-width: 680px;
+    margin: 20px auto 0;
+    text-align: center;
+    animation: fadeUp 0.6s ease;
+  }
+
+  .welcome-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 12px;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    font-size: 11px;
+    color: var(--accent);
+    font-weight: 500;
+    margin-bottom: 20px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+
+  .welcome-badge::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.8); }
+  }
+
+  .welcome h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: 32px;
+    font-weight: 800;
+    line-height: 1.2;
+    margin-bottom: 12px;
+    background: linear-gradient(135deg, #e8f0fe 0%, var(--accent) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .welcome p {
+    color: var(--text-muted);
+    font-size: 15px;
+    font-weight: 300;
+    line-height: 1.6;
+    margin-bottom: 28px;
+  }
+
+  .quick-questions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    text-align: left;
+  }
+
+  .quick-q {
+    padding: 12px 15px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 13px;
+    color: var(--text-muted);
+    transition: all 0.2s;
+    font-family: 'DM Sans', sans-serif;
+    line-height: 1.4;
+  }
+
+  .quick-q:hover {
+    border-color: var(--accent);
+    color: var(--text);
+    background: var(--accent-glow);
+    transform: translateY(-1px);
+  }
+
+  .quick-q .icon {
+    font-size: 16px;
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  /* Messages */
+  .msg {
+    display: flex;
+    gap: 12px;
+    max-width: 760px;
+    margin: 0 auto;
+    width: 100%;
+    animation: fadeUp 0.3s ease;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .msg.user {
+    flex-direction: row-reverse;
+  }
+
+  .avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 700;
+    flex-shrink: 0;
+    margin-top: 2px;
+    font-family: 'Syne', sans-serif;
+  }
+
+  .msg.user .avatar {
+    background: linear-gradient(135deg, var(--accent2), var(--accent));
+    color: white;
+  }
+
+  .msg.ai .avatar {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--accent);
+  }
+
+  .bubble {
+    padding: 13px 16px;
+    border-radius: 12px;
+    font-size: 14.5px;
+    line-height: 1.65;
+    max-width: calc(100% - 50px);
+  }
+
+  .msg.user .bubble {
+    background: var(--user-bubble);
+    border: 1px solid rgba(0,102,255,0.3);
+    border-radius: 12px 4px 12px 12px;
+    color: var(--text);
+  }
+
+  .msg.ai .bubble {
+    background: var(--ai-bubble);
+    border: 1px solid var(--border);
+    border-radius: 4px 12px 12px 12px;
+    color: var(--text);
+  }
+
+  .bubble table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 10px 0;
+    font-size: 13px;
+  }
+
+  .bubble th {
+    background: rgba(0,212,255,0.1);
+    color: var(--accent);
+    padding: 7px 11px;
+    text-align: left;
+    border: 1px solid var(--border);
+    font-weight: 600;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+
+  .bubble td {
+    padding: 7px 11px;
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    vertical-align: top;
+  }
+
+  .bubble tr:hover td { background: rgba(255,255,255,0.02); }
+
+  .bubble strong { color: var(--accent); font-weight: 600; }
+  .bubble em { color: var(--text-muted); font-style: normal; font-size: 0.95em; }
+
+  .bubble h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+    margin: 12px 0 6px;
+    padding-bottom: 5px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .bubble h3:first-child { margin-top: 0; }
+
+  .bubble ul {
+    padding-left: 18px;
+    margin: 6px 0;
+    color: var(--text-muted);
+  }
+
+  .bubble ul li { margin-bottom: 3px; }
+
+  .bubble .tag {
+    display: inline-block;
+    padding: 2px 8px;
+    background: rgba(0,212,255,0.1);
+    border: 1px solid rgba(0,212,255,0.2);
+    border-radius: 4px;
+    font-size: 11px;
+    color: var(--accent);
+    font-weight: 600;
+    margin: 2px 2px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+
+  /* Typing indicator */
+  .typing {
+    display: flex;
+    gap: 5px;
+    padding: 14px 16px;
+    align-items: center;
+  }
+
+  .typing span {
+    width: 7px;
+    height: 7px;
+    background: var(--accent);
+    border-radius: 50%;
+    animation: bounce 1.2s infinite;
+    opacity: 0.6;
+  }
+
+  .typing span:nth-child(2) { animation-delay: 0.2s; }
+  .typing span:nth-child(3) { animation-delay: 0.4s; }
+
+  @keyframes bounce {
+    0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+    30% { transform: translateY(-6px); opacity: 1; }
+  }
+
+  /* Quick suggestions */
+  .suggestions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 10px;
+  }
+
+  .suggestion-chip {
+    padding: 4px 10px;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    font-size: 12px;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.15s;
+    background: transparent;
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  .suggestion-chip:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  /* Input area */
+  .input-area {
+    position: relative;
+    z-index: 10;
+    padding: 16px 20px 20px;
+    background: rgba(8,12,20,0.95);
+    border-top: 1px solid var(--border);
+    backdrop-filter: blur(12px);
+  }
+
+  .input-box {
+    max-width: 760px;
+    margin: 0 auto;
+    display: flex;
+    gap: 10px;
+    align-items: flex-end;
+  }
+
+  #userInput {
+    flex: 1;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px 16px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    resize: none;
+    min-height: 46px;
+    max-height: 120px;
+    outline: none;
+    transition: border-color 0.2s;
+    line-height: 1.5;
+  }
+
+  #userInput:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-glow);
+  }
+
+  #userInput::placeholder { color: var(--text-muted); }
+
+  #sendBtn {
+    width: 46px;
+    height: 46px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, var(--accent2), var(--accent));
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    flex-shrink: 0;
+  }
+
+  #sendBtn:hover { transform: scale(1.05); opacity: 0.9; }
+  #sendBtn:active { transform: scale(0.97); }
+  #sendBtn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+  #sendBtn svg { width: 18px; height: 18px; fill: white; }
+
+  .input-hint {
+    max-width: 760px;
+    margin: 6px auto 0;
+    font-size: 11px;
+    color: var(--text-muted);
+    opacity: 0.6;
+    text-align: center;
+  }
+
+  /* Error */
+  .error-msg {
+    color: #ff6b6b;
+    font-size: 13px;
+    text-align: center;
+    padding: 8px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo-group">
+    <div class="logo-icon">QN</div>
+    <div>
+      <div class="logo-text">QNAP <span>Switch</span> Advisor</div>
+      <div class="logo-sub" id="logoSub">AI 產品顧問 · 即時解答</div>
+    </div>
+  </div>
+  <div class="lang-toggle">
+    <button class="lang-btn active" id="btnZh" onclick="setLang('zh')">繁中</button>
+    <button class="lang-btn" id="btnEn" onclick="setLang('en')">EN</button>
+  </div>
+</header>
+
+<div class="chat-wrapper">
+  <div id="chat">
+    <div class="welcome" id="welcome">
+      <div class="welcome-badge" id="wBadge">AI 驅動產品顧問</div>
+      <h1 id="wTitle">QNAP Switch<br>找到完美的交換器</h1>
+      <p id="wDesc">詢問任何關於 QNAP 交換器產品的問題——規格比較、PoE 支援、10GbE 型號，或購買建議，我都能幫你解答。</p>
+      <div class="quick-questions" id="quickQ">
+        <div class="quick-q" onclick="askQuestion(this.dataset.q)" data-q="哪些型號支援 PoE+？">
+          <span class="icon">⚡</span>哪些型號支援 PoE+？
+        </div>
+        <div class="quick-q" onclick="askQuestion(this.dataset.q)" data-q="10GbE 交換器有哪些型號？">
+          <span class="icon">🚀</span>10GbE 交換器有哪些型號？
+        </div>
+        <div class="quick-q" onclick="askQuestion(this.dataset.q)" data-q="我需要 8 埠 PoE 交換器，推薦哪款？">
+          <span class="icon">💡</span>我需要 8 埠 PoE 交換器，推薦哪款？
+        </div>
+        <div class="quick-q" onclick="askQuestion(this.dataset.q)" data-q="QSW-M408-4C 和 QSW-M3216R-8S8T 有什麼差別？">
+          <span class="icon">🔍</span>QSW-M408 vs QSW-M3216R 差別？
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="input-area">
+  <div class="input-box">
+    <textarea id="userInput" rows="1" placeholder="詢問 QNAP Switch 規格、比較、推薦..." onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
+    <button id="sendBtn" onclick="sendMessage()">
+      <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+    </button>
+  </div>
+  <div class="input-hint" id="inputHint">按 Enter 送出 · Shift+Enter 換行</div>
+</div>
+
+<script>
+let currentLang = 'zh';
+let conversationHistory = [];
+let isLoading = false;
+
+const i18n = {
+  zh: {
+    logoSub: 'AI 產品顧問 · 即時解答',
+    badge: 'AI 驅動產品顧問',
+    title: 'QNAP Switch\n找到完美的交換器',
+    desc: '詢問任何關於 QNAP 交換器產品的問題——規格比較、PoE 支援、10GbE 型號，或購買建議，我都能幫你解答。',
+    placeholder: '詢問 QNAP Switch 規格、比較、推薦...',
+    hint: '按 Enter 送出 · Shift+Enter 換行',
+    questions: [
+      { icon: '⚡', text: '哪些型號支援 PoE+？', q: '哪些型號支援 PoE+？' },
+      { icon: '🚀', text: '10GbE 交換器有哪些型號？', q: '10GbE 交換器有哪些型號？' },
+      { icon: '💡', text: '我需要 8 埠 PoE 交換器，推薦哪款？', q: '我需要 8 埠 PoE 交換器，推薦哪款？' },
+      { icon: '🔍', text: 'QSW-M408 vs QSW-M3216R 差別？', q: 'QSW-M408-4C 和 QSW-M3216R-8S8T 有什麼差別？' }
+    ],
+    you: '你',
+    userAvatar: 'U',
+    aiAvatar: 'AI'
+  },
+  en: {
+    logoSub: 'AI Product Advisor · Real-time Answers',
+    badge: 'AI-Powered Advisor',
+    title: 'QNAP Switch\nFind Your Perfect Switch',
+    desc: 'Ask anything about QNAP Switch products — specs comparison, PoE support, 10GbE models, or buying recommendations. I\'m here to help.',
+    placeholder: 'Ask about QNAP Switch specs, comparisons, recommendations...',
+    hint: 'Press Enter to send · Shift+Enter for new line',
+    questions: [
+      { icon: '⚡', text: 'Which models support PoE+?', q: 'Which QNAP switch models support PoE+?' },
+      { icon: '🚀', text: 'What are the 10GbE models?', q: 'What 10GbE switch models does QNAP offer?' },
+      { icon: '💡', text: 'Recommend an 8-port PoE switch', q: 'I need an 8-port PoE switch. Which QNAP model do you recommend?' },
+      { icon: '🔍', text: 'QSW-M408 vs QSW-M3216R?', q: 'What is the difference between QSW-M408-4C and QSW-M3216R-8S8T?' }
+    ],
+    you: 'You',
+    userAvatar: 'U',
+    aiAvatar: 'AI'
+  }
+};
+
+function setLang(lang) {
+  currentLang = lang;
+  document.getElementById('btnZh').classList.toggle('active', lang === 'zh');
+  document.getElementById('btnEn').classList.toggle('active', lang === 'en');
+  const t = i18n[lang];
+  document.getElementById('logoSub').textContent = t.logoSub;
+  document.getElementById('wBadge').textContent = t.badge;
+  const titleLines = t.title.split('\n');
+  document.getElementById('wTitle').innerHTML = titleLines.join('<br>');
+  document.getElementById('wDesc').textContent = t.desc;
+  document.getElementById('userInput').placeholder = t.placeholder;
+  document.getElementById('inputHint').textContent = t.hint;
+
+  const qContainer = document.getElementById('quickQ');
+  if (qContainer) {
+    qContainer.innerHTML = t.questions.map(q => `
+      <div class="quick-q" onclick="askQuestion('${q.q.replace(/'/g, "\\'")}')">
+        <span class="icon">${q.icon}</span>${q.text}
+      </div>
+    `).join('');
+  }
+
+  // Update html lang
+  document.documentElement.lang = lang === 'zh' ? 'zh-TW' : 'en';
+}
+
+function autoResize(el) {
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 120) + 'px';
+}
+
+function handleKey(e) {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    sendMessage();
+  }
+}
+
+function askQuestion(q) {
+  document.getElementById('userInput').value = q;
+  sendMessage();
+}
+
+function hideWelcome() {
+  const w = document.getElementById('welcome');
+  if (w) {
+    w.style.transition = 'opacity 0.3s, transform 0.3s';
+    w.style.opacity = '0';
+    w.style.transform = 'translateY(-10px)';
+    setTimeout(() => w.remove(), 300);
+  }
+}
+
+function appendMessage(role, text) {
+  hideWelcome();
+  const chat = document.getElementById('chat');
+  const t = i18n[currentLang];
+  const div = document.createElement('div');
+  div.className = `msg ${role}`;
+
+  const avatarText = role === 'user' ? t.userAvatar : t.aiAvatar;
+  let content = text;
+
+  // Basic markdown rendering
+  content = content
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/`([^`]+)`/g, '<code style="background:rgba(0,212,255,0.1);padding:1px 5px;border-radius:3px;font-size:0.9em;color:var(--accent)">$1</code>')
+    .replace(/^### (.+)$/gm, '<h3>$1</h3>')
+    .replace(/^## (.+)$/gm, '<h3>$1</h3>')
+    .replace(/^- (.+)$/gm, '<li>$1</li>')
+    .replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>')
+    .replace(/\n\n/g, '</p><p>')
+    .replace(/\n/g, '<br>');
+
+  // Wrap in paragraph if not structured
+  if (!content.includes('<h3>') && !content.includes('<ul>') && !content.includes('<table>')) {
+    content = `<p>${content}</p>`;
+  }
+
+  div.innerHTML = `
+    <div class="avatar">${avatarText}</div>
+    <div class="bubble">${content}</div>
+  `;
+  chat.appendChild(div);
+  chat.scrollTop = chat.scrollHeight;
+  return div;
+}
+
+function showTyping() {
+  const chat = document.getElementById('chat');
+  const t = i18n[currentLang];
+  const div = document.createElement('div');
+  div.className = 'msg ai';
+  div.id = 'typing-indicator';
+  div.innerHTML = `
+    <div class="avatar">${t.aiAvatar}</div>
+    <div class="bubble">
+      <div class="typing"><span></span><span></span><span></span></div>
+    </div>
+  `;
+  chat.appendChild(div);
+  chat.scrollTop = chat.scrollHeight;
+}
+
+function removeTyping() {
+  const el = document.getElementById('typing-indicator');
+  if (el) el.remove();
+}
+
+const SYSTEM_PROMPT = `You are an expert QNAP Switch product advisor. You have comprehensive knowledge of all QNAP Switch products including their specifications, features, and use cases.
+
+Key QNAP Switch product lines:
+- QSW series (Unmanaged): QSW-1105-5T (5-port 2.5GbE), QSW-2104-2T (4x2.5G+2x10G), QSW-308-1C (8xGbE+1x10G), QSW-308S (8xGbE+1x10G SFP+)
+- QSW-M series (Web Managed/L2): QSW-M408-4C (8x10G Base-T + 4x10G SFP+), QSW-M408S (8x10G + 4x SFP+), QSW-M1208-8C (12-port 10G), QSW-M3216R-8S8T (16x10G SFP+ + 8x10G Base-T), QSW-M7308R-4X (10/25GbE)
+- QGD series (Smart Edge/NDR): QGD-1600 (16-port GbE), QGD-1600P (16-port PoE GbE), QGD-1602 (16G+2x10G), QGD-1602P (PoE), QGD-3014-16PT (PoE+)
+- Industrial: QSW-M2116P-2T2S (16-port PoE, industrial grade)
+
+PoE Models: QGD-1600P, QGD-1602P, QGD-3014-16PT, QSW-M2116P-2T2S
+10GbE Models: QSW-M408-4C, QSW-M408S, QSW-M1208-8C, QSW-M3216R-8S8T, QSW-2104-2T (uplink)
+25GbE Models: QSW-M7308R-4X
+
+Management Types:
+- Unmanaged: QSW series (plug and play)
+- Web Managed (L2): QSW-M series (VLAN, QoS, link aggregation, RSTP)
+- Smart Edge: QGD series (runs QuTS hero OS, can run VMs/containers)
+
+Always respond in the same language as the user's question (Traditional Chinese or English).
+When comparing products, use a clear table format.
+When recommending, ask about use case if not clear, or give top 2-3 suggestions with reasoning.
+Keep responses concise and practical for general consumers.`;
+
+async function sendMessage() {
+  const input = document.getElementById('userInput');
+  const text = input.value.trim();
+  if (!text || isLoading) return;
+
+  isLoading = true;
+  document.getElementById('sendBtn').disabled = true;
+  input.value = '';
+  input.style.height = 'auto';
+
+  appendMessage('user', text);
+  conversationHistory.push({ role: 'user', content: text });
+
+  showTyping();
+
+  try {
+    // =============================================
+    // 🔑 設定你的 Anthropic API Key
+    // Set your Anthropic API Key here (for local/internal use only)
+    // For production deployment, use a backend proxy instead.
+    // 正式部署請使用後端代理，不要將 Key 暴露在前端！
+    // =============================================
+    const API_KEY = 'YOUR_ANTHROPIC_API_KEY'; // ← 替換成你的 API Key
+
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': API_KEY,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        system: SYSTEM_PROMPT,
+        messages: conversationHistory
+      })
+    });
+
+    removeTyping();
+
+    if (!response.ok) {
+      const err = await response.json().catch(() => ({}));
+      throw new Error(err.error?.message || `API error ${response.status}`);
+    }
+
+    const data = await response.json();
+    const aiText = data.content?.[0]?.text || '抱歉，無法取得回應。';
+    conversationHistory.push({ role: 'assistant', content: aiText });
+    appendMessage('ai', aiText);
+
+  } catch (err) {
+    removeTyping();
+    const errDiv = document.createElement('div');
+    errDiv.className = 'error-msg';
+    errDiv.textContent = currentLang === 'zh'
+      ? `⚠️ 連線錯誤：${err.message}`
+      : `⚠️ Connection error: ${err.message}`;
+    document.getElementById('chat').appendChild(errDiv);
+    // Remove failed message from history
+    conversationHistory.pop();
+  }
+
+  isLoading = false;
+  document.getElementById('sendBtn').disabled = false;
+  input.focus();
+}
+</script>
+</body>
+</html>
