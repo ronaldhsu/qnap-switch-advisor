@@ -609,29 +609,12 @@
     </div>
   </div>
   <div style="display:flex;align-items:center;gap:14px;">
-    <div class="key-indicator" onclick="showKeyModal()" title="點擊設定 API Key">
-      <div class="key-dot" id="keyDot"></div>
-      <span id="keyStatus">API Key</span>
-    </div>
     <div class="lang-toggle">
       <button class="lang-btn active" id="btnZh" onclick="setLang('zh')">繁中</button>
       <button class="lang-btn" id="btnEn" onclick="setLang('en')">EN</button>
     </div>
   </div>
 </header>
-
-<!-- API Key Modal -->
-<div class="modal-overlay" id="keyModal">
-  <div class="modal-box">
-    <h2>🔑 設定 Groq API Key</h2>
-    <p>
-      前往 <a href="https://console.groq.com/keys" target="_blank">Groq Console</a>
-      免費取得 API Key（無需信用卡），貼入後儲存於本機瀏覽器，不會上傳至任何伺服器。
-    </p>
-    <input class="modal-input" type="password" id="keyInput" placeholder="gsk_..." />
-    <button class="modal-btn" onclick="saveKey()">儲存並開始使用</button>
-  </div>
-</div>
 
 <div class="chat-wrapper">
   <div id="chat">
@@ -874,43 +857,8 @@ When recommending, ask about use case if not clear, or give top 2-3 suggestions 
 Keep responses concise and practical for general consumers.`;
 }
 
-// --- API Key management ---
-function getKey() { return localStorage.getItem('groq_api_key') || ''; }
-
-function saveKey() {
-  const val = document.getElementById('keyInput').value.trim();
-  if (!val) return;
-  localStorage.setItem('groq_api_key', val);
-  document.getElementById('keyModal').classList.add('hidden');
-  updateKeyIndicator();
-}
-
-function showKeyModal() {
-  document.getElementById('keyInput').value = getKey();
-  document.getElementById('keyModal').classList.remove('hidden');
-}
-
-function updateKeyIndicator() {
-  const hasKey = !!getKey();
-  document.getElementById('keyDot').className = 'key-dot' + (hasKey ? '' : ' unset');
-  document.getElementById('keyStatus').textContent = hasKey ? 'API Key ✓' : 'API Key 未設定';
-}
-
-// Close modal when clicking overlay background
-document.getElementById('keyModal').addEventListener('click', function(e) {
-  if (e.target === this && getKey()) this.classList.add('hidden');
-});
-
-// Enter key in modal input
-document.getElementById('keyInput').addEventListener('keydown', function(e) {
-  if (e.key === 'Enter') saveKey();
-});
-
-// Init on load
-window.addEventListener('DOMContentLoaded', function() {
-  updateKeyIndicator();
-  if (!getKey()) showKeyModal();
-});
+// 設定您的 Groq API Key
+const GROQ_API_KEY = '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';
 
 // --- Groq API ---
 async function sendMessage() {
@@ -918,8 +866,11 @@ async function sendMessage() {
   const text = input.value.trim();
   if (!text || isLoading) return;
 
-  const API_KEY = getKey();
-  if (!API_KEY) { showKeyModal(); return; }
+  const API_KEY = GROQ_API_KEY;
+  if (!API_KEY) {
+    alert('請在程式碼中設定您的 Groq API Key');
+    return;
+  }
 
   isLoading = true;
   document.getElementById('sendBtn').disabled = true;
