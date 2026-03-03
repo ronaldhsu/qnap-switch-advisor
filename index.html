@@ -7,6 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
 <script src="products.js"></script>
+<script src="config.js" onerror="window.__configMissing=true"></script>
 <style>
   :root {
     --bg: #080c14;
@@ -650,6 +651,17 @@
   <div class="input-hint" id="inputHint">按 Enter 送出 · Shift+Enter 換行</div>
 </div>
 
+<!-- API Key Modal (for GitHub Pages / no config.js) -->
+<div class="modal-overlay hidden" id="apiModal">
+  <div class="modal-box">
+    <h2>🔑 設定 Groq API Key</h2>
+    <p>未偵測到本機 <code style="font-size:11px;background:rgba(0,212,255,0.1);padding:1px 5px;border-radius:3px;color:var(--accent)">config.js</code>，請輸入您的 Groq API Key 以啟用 AI 功能。<br>
+    取得 Key：<a href="https://console.groq.com" target="_blank">console.groq.com</a>（免費）</p>
+    <input type="password" class="modal-input" id="apiKeyInput" placeholder="gsk_...">
+    <button class="modal-btn" onclick="saveApiKey()">儲存並繼續</button>
+  </div>
+</div>
+
 <script>
 let currentLang = 'zh';
 let conversationHistory = [];
@@ -857,8 +869,30 @@ When recommending, ask about use case if not clear, or give top 2-3 suggestions 
 Keep responses concise and practical for general consumers.`;
 }
 
-// 設定您的 Groq API Key
-const GROQ_API_KEY = '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';
+// --- API Key 管理 ---
+// 優先順序：config.js（本機）→ localStorage（GitHub Pages）
+function getApiKey() {
+  return window.GROQ_CONFIG?.apiKey || localStorage.getItem('groq_api_key') || null;
+}
+
+function saveApiKey() {
+  const key = document.getElementById('apiKeyInput').value.trim();
+  if (!key.startsWith('gsk_')) {
+    document.getElementById('apiKeyInput').style.borderColor = '#ff6b6b';
+    return;
+  }
+  localStorage.setItem('groq_api_key', key);
+  document.getElementById('apiModal').classList.add('hidden');
+}
+
+function showApiModal() {
+  document.getElementById('apiModal').classList.remove('hidden');
+}
+
+// 頁面載入時：若無 key 則顯示 modal
+window.addEventListener('load', () => {
+  if (!getApiKey()) showApiModal();
+});
 
 // --- Groq API ---
 async function sendMessage() {
@@ -866,9 +900,9 @@ async function sendMessage() {
   const text = input.value.trim();
   if (!text || isLoading) return;
 
-  const API_KEY = GROQ_API_KEY;
+  const API_KEY = getApiKey();
   if (!API_KEY) {
-    alert('請在程式碼中設定您的 Groq API Key');
+    showApiModal();
     return;
   }
 
