@@ -73,6 +73,26 @@ const QNAP_PRODUCTS = {
       ]
     },
 
+    // ── QSW-L：輕網管型（Lite Managed）──────────────────────────────
+    {
+      id: "QSW-L3",
+      name: "QSW-L Series",
+      management: "Lite Managed",
+      description: "輕量網管，支援基本 VLAN 與流量監控，適合需要簡易管理的 10GbE 網路",
+      models: [
+        {
+          model: "QSW-L3208-2C6T",
+          ports: "6x 10GbE RJ45 + 2x 10GbE SFP+/RJ45 Combo",
+          features: ["10GbE", "Combo port"]
+        },
+        {
+          model: "QSW-L3205-1C4T",
+          ports: "4x 10GbE RJ45 + 1x 10GbE SFP+/RJ45 Combo",
+          features: ["10GbE", "Combo port"]
+        }
+      ]
+    },
+
     // ── QSW-M：網頁管理型 L2 ──────────────────────────────────────────
     {
       id: "QSW-M",
@@ -189,26 +209,6 @@ const QNAP_PRODUCTS = {
           ports: "8x 10GbE RJ45 + 8x 10GbE SFP+",
           features: ["10GbE", "SFP+", "Rack mount", "Industrial"],
           notes: "工業級設計，寬溫操作環境"
-        }
-      ]
-    },
-
-    // ── QSW-L：輕網管型（Lite Managed）──────────────────────────────
-    {
-      id: "QSW-L3",
-      name: "QSW-L Series",
-      management: "Lite Managed",
-      description: "輕量網管，支援基本 VLAN 與流量監控，適合需要簡易管理的 10GbE 網路",
-      models: [
-        {
-          model: "QSW-L3208-2C6T",
-          ports: "6x 10GbE RJ45 + 2x 10GbE SFP+/RJ45 Combo",
-          features: ["10GbE", "Combo port"]
-        },
-        {
-          model: "QSW-L3205-1C4T",
-          ports: "4x 10GbE RJ45 + 1x 10GbE SFP+/RJ45 Combo",
-          features: ["10GbE", "Combo port"]
         }
       ]
     },
