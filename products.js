@@ -193,10 +193,10 @@ const QNAP_PRODUCTS = {
       ]
     },
 
-    // ── QSW-L3：輕網管型（Lite Managed）─────────────────────────────
+    // ── QSW-L：輕網管型（Lite Managed）──────────────────────────────
     {
       id: "QSW-L3",
-      name: "QSW-L3 Series",
+      name: "QSW-L Series",
       management: "Lite Managed",
       description: "輕量網管，支援基本 VLAN 與流量監控，適合需要簡易管理的 10GbE 網路",
       models: [
