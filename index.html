@@ -808,18 +808,38 @@ function appendMessage(role, text) {
     .replace(/^- (.+)$/gm, '<li>$1</li>')
     .replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>');
 
-  // Parse markdown tables (must run before \n → <br> conversion)
-  content = content.replace(/(\|[^\n]+\|\n)([ \t]*\|[\s\-:|]+\|\n?)((?:\|[^\n]+\|?\n?)*)/g, (match) => {
-    const rows = match.trim().split('\n');
-    const dataRows = rows.filter(r => !/^[\|\-:\s]+$/.test(r));
-    let html = '<table>';
-    dataRows.forEach((row, idx) => {
-      const cells = row.trim().replace(/^\||\|$/g, '').split('|').map(c => c.trim());
-      const tag = idx === 0 ? 'th' : 'td';
-      html += '<tr>' + cells.map(c => `<${tag}>${c}</${tag}>`).join('') + '</tr>';
-    });
-    return html + '</table>';
-  });
+  // Parse markdown tables (line-by-line, handles rows with or without leading |)
+  {
+    const isSep = l => /^[\|\-\:\s]+$/.test(l) && l.includes('-') && l.includes('|');
+    const lines = content.split('\n');
+    const out = [];
+    let i = 0;
+    while (i < lines.length) {
+      const cur = lines[i];
+      const nxt = i + 1 < lines.length ? lines[i + 1] : '';
+      // Table detected: line with | followed by a separator line
+      if (cur.includes('|') && isSep(nxt)) {
+        const rows = [cur];
+        i += 2; // skip header + separator
+        while (i < lines.length && lines[i].includes('|')) {
+          rows.push(lines[i]);
+          i++;
+        }
+        let html = '<table>';
+        rows.forEach((row, idx) => {
+          const cells = row.trim().replace(/^\||\|$/g, '').split('|').map(c => c.trim());
+          const tag = idx === 0 ? 'th' : 'td';
+          html += '<tr>' + cells.map(c => `<${tag}>${c}</${tag}>`).join('') + '</tr>';
+        });
+        html += '</table>';
+        out.push(html);
+        continue;
+      }
+      out.push(cur);
+      i++;
+    }
+    content = out.join('\n');
+  }
 
   content = content
     .replace(/\n\n/g, '</p><p>')
@@ -912,7 +932,10 @@ Management Types:
 ${mgmtLines}
 
 Always respond in the same language as the user's question (Traditional Chinese or English).
-When comparing products, use a clear table format.
+When comparing products, always use a markdown table. Every row (header and data) MUST start and end with a pipe character |. Example:
+| 規格 | 型號A | 型號B |
+|------|-------|-------|
+| 埠數 | 8x 2.5GbE | 4x 2.5GbE |
 When recommending, ask about use case if not clear, or give top 2-3 suggestions with reasoning.
 Keep responses concise and practical for general consumers.`;
 }
