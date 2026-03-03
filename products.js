@@ -165,11 +165,6 @@ const QNAP_PRODUCTS = {
           features: ["10GbE", "SFP+", "Rack mount"]
         },
         {
-          model: "QSW-M3224-24T",
-          ports: "24x 10GbE RJ45",
-          features: ["10GbE", "Rack mount"]
-        },
-        {
           model: "QSW-M1208-8C",
           ports: "4x 10GbE SFP+ + 8x 10GbE SFP+/RJ45 Combo",
           features: ["10GbE", "SFP+", "Combo port"]
@@ -186,14 +181,6 @@ const QNAP_PRODUCTS = {
           ports: "16x 25GbE SFP28",
           uplink: "1x 10GbE RJ45",
           features: ["25GbE", "SFP28"]
-        },
-
-        // QSW 7000 Series – 100GbE
-        {
-          model: "QSW-M7308R-4X",
-          ports: "8x 25GbE SFP28",
-          uplink: "4x 100GbE QSFP28",
-          features: ["25GbE", "100GbE uplink", "Rack mount"]
         },
 
         // Industrial Managed
@@ -226,6 +213,28 @@ const QNAP_PRODUCTS = {
       ]
     },
 
+    // ── QSW-M L3 Lite：L3 Lite 管理型 ────────────────────────────────
+    {
+      id: "QSW-M-L3",
+      name: "QSW-M L3 Lite Series",
+      management: "L3 Lite Managed",
+      description: "具備 L3 Lite 路由功能 (Static Routing) 的網管型交換器",
+      models: [
+        {
+          model: "QSW-M3224-24T",
+          ports: "24x 10GbE RJ45",
+          features: ["10GbE", "Rack mount", "L3 routing"]
+        },
+        {
+          model: "QSW-M7308R-4X",
+          ports: "8x 25GbE SFP28",
+          uplink: "4x 100GbE QSFP28",
+          features: ["25GbE", "100GbE uplink", "Rack mount", "L3 routing"],
+          notes: "適合中小企業部署 100GbE 高速骨幹網路"
+        }
+      ]
+    },
+
     // ── QGD：Smart Edge（搭載 QuTS hero OS）────────────────────────────
     {
       id: "QGD",
@@ -234,9 +243,10 @@ const QNAP_PRODUCTS = {
       description: "搭載 QuTS hero OS，可執行 NAS 應用、VM、Container，適合邊緣運算",
       models: [
         {
-          model: "QGD-1600",
-          ports: "14x 1GbE RJ45 + 2x 1GbE RJ45/SFP Combo",
-          features: ["Smart Edge", "QuTS hero"]
+          model: "QGD-1600P",
+          ports: "4x 1GbE PoE++ + 10x 1GbE PoE+ + 2x 1GbE PoE+/SFP Combo",
+          poe: "PoE++",
+          features: ["PoE++", "Smart Edge", "QuTS hero"]
         },
         {
           model: "QGD-1602",
