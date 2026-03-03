@@ -304,6 +304,28 @@
     border: 1px solid var(--border);
     border-radius: 4px 12px 12px 12px;
     color: var(--text);
+    max-height: 60vh;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+  }
+
+  .msg.ai .bubble::-webkit-scrollbar {
+    width: 5px;
+  }
+
+  .msg.ai .bubble::-webkit-scrollbar-track {
+    background: transparent;
+    border-radius: 0 12px 12px 0;
+  }
+
+  .msg.ai .bubble::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 3px;
+  }
+
+  .msg.ai .bubble::-webkit-scrollbar-thumb:hover {
+    background: var(--text-muted);
   }
 
   .bubble table {
