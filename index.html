@@ -6,7 +6,7 @@
 <title>QNAP Switch 產品顧問 | Product Advisor</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
-<script src="products.js?v=20260303"></script>
+<script src="products.js?v=20260303b"></script>
 <script src="config.js" onerror="window.__configMissing=true"></script>
 <style>
   :root {
@@ -866,16 +866,16 @@ function removeTyping() {
  * 未來只需修改 products.js，提示詞會自動更新，無需動此處。
  */
 function buildSystemPrompt() {
-  // 1. 產品線清單
+  // 1. 產品線清單（依 1000/2000/3000/5000/7000 Series 分類，管理類型標示於各型號）
   const productLines = QNAP_PRODUCTS.series.map(series => {
     const modelList = series.models.map(m => {
-      let desc = `${m.model} (${m.ports}`;
+      let desc = `${m.model} [${m.management}] (${m.ports}`;
       if (m.uplink) desc += `, uplink: ${m.uplink}`;
       if (m.poe)    desc += `, ${m.poe}`;
       desc += ')';
       return desc;
     }).join('; ');
-    return `- ${series.name} (${series.management}): ${modelList}`;
+    return `- ${series.name}: ${modelList}`;
   }).join('\n');
 
   // 2. 依 feature tag 自動彙整速度/PoE 索引
@@ -895,10 +895,11 @@ function buildSystemPrompt() {
     g100Models.length && `100GbE Uplink Models: ${g100Models.join(', ')}`
   ].filter(Boolean).join('\n');
 
-  // 3. 管理類型說明
-  const mgmtLines = QNAP_PRODUCTS.series.map(s =>
-    `- ${s.management}: ${s.name} — ${s.description}`
-  ).join('\n');
+  // 3. 系列說明（含各系列內的管理類型）
+  const mgmtLines = QNAP_PRODUCTS.series.map(s => {
+    const types = [...new Set(s.models.map(m => m.management))].join(' / ');
+    return `- ${s.name} (${types}) — ${s.description}`;
+  }).join('\n');
 
   return `You are an expert QNAP Switch product advisor. You have comprehensive knowledge of all QNAP Switch products including their specifications, features, and use cases.
 
