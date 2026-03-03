@@ -796,7 +796,22 @@ function appendMessage(role, text) {
     .replace(/^### (.+)$/gm, '<h3>$1</h3>')
     .replace(/^## (.+)$/gm, '<h3>$1</h3>')
     .replace(/^- (.+)$/gm, '<li>$1</li>')
-    .replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>')
+    .replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>');
+
+  // Parse markdown tables (must run before \n → <br> conversion)
+  content = content.replace(/(\|[^\n]+\|\n)([ \t]*\|[\s\-:|]+\|\n?)((?:\|[^\n]+\|?\n?)*)/g, (match) => {
+    const rows = match.trim().split('\n');
+    const dataRows = rows.filter(r => !/^[\|\-:\s]+$/.test(r));
+    let html = '<table>';
+    dataRows.forEach((row, idx) => {
+      const cells = row.trim().replace(/^\||\|$/g, '').split('|').map(c => c.trim());
+      const tag = idx === 0 ? 'th' : 'td';
+      html += '<tr>' + cells.map(c => `<${tag}>${c}</${tag}>`).join('') + '</tr>';
+    });
+    return html + '</table>';
+  });
+
+  content = content
     .replace(/\n\n/g, '</p><p>')
     .replace(/\n/g, '<br>');
 
