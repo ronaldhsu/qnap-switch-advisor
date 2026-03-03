@@ -6,7 +6,7 @@
 <title>QNAP Switch 產品顧問 | Product Advisor</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
-<script src="products.js?v=20260303b"></script>
+<script src="products.js?v=20260303c"></script>
 <script src="config.js" onerror="window.__configMissing=true"></script>
 <style>
   :root {
@@ -708,7 +708,7 @@
 </div>
 
 <script>
-const APP_VERSION = 'v0.00.002';
+const APP_VERSION = 'v0.00.003';
 document.getElementById('versionTag').textContent = APP_VERSION;
 
 let currentLang = 'zh';
@@ -907,9 +907,8 @@ function buildSystemPrompt() {
   // 1. 產品線清單（依 1000/2000/3000/5000/7000 Series 分類，管理類型標示於各型號）
   const productLines = QNAP_PRODUCTS.series.map(series => {
     const modelList = series.models.map(m => {
-      let desc = `${m.model} [${m.management}] (${m.ports}`;
-      if (m.uplink) desc += `, uplink: ${m.uplink}`;
-      if (m.poe)    desc += `, ${m.poe}`;
+      let desc = `${m.model} [${m.management}] (總埠數: ${m.totalPorts}`;
+      if (m.poe) desc += `, ${m.poe}`;
       desc += ')';
       return desc;
     }).join('; ');
@@ -950,10 +949,12 @@ Management Types:
 ${mgmtLines}
 
 Always respond in the same language as the user's question (Traditional Chinese or English).
-When comparing products, always use a markdown table. Every row (header and data) MUST start and end with a pipe character |. Example:
+When comparing products, always use a markdown table. Include these rows (when applicable): 總埠數, 接取埠, 上行埠, 管理型態, PoE. Every row (header and data) MUST start and end with a pipe character |. Example:
 | 規格 | 型號A | 型號B |
 |------|-------|-------|
-| 埠數 | 8x 2.5GbE | 4x 2.5GbE |
+| 總埠數 | 8x 2.5GbE + 2x 10GbE SFP+ | 4x 2.5GbE + 2x 10GbE RJ45 |
+| 接取埠 | 8x 2.5GbE | 4x 2.5GbE |
+| 上行埠 | 2x 10GbE SFP+ | 2x 10GbE RJ45 |
 When recommending, ask about use case if not clear, or give top 2-3 suggestions with reasoning.
 Keep responses concise and practical for general consumers.`;
 }

@@ -304,3 +304,12 @@ const QNAP_PRODUCTS = {
   // 快速查詢索引（由 buildSystemPrompt() 自動產生，不需手動維護）
   featureIndex: {}
 };
+
+// ── 後處理：自動計算 totalPorts（埠數 + 上行埠）──────────────────────────
+// totalPorts 欄位為唯讀衍生值，不需在上方資料中手動填寫；
+// 僅需維護 ports 與 uplink，此處會自動合併。
+QNAP_PRODUCTS.series.forEach(series => {
+  series.models.forEach(m => {
+    m.totalPorts = m.uplink ? `${m.ports} + ${m.uplink}` : m.ports;
+  });
+});
