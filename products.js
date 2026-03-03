@@ -206,22 +206,22 @@ const QNAP_PRODUCTS = {
       ]
     },
 
-    // ── QSW-L3：L3 Lite 管理型 ────────────────────────────────────────
+    // ── QSW-L3：輕網管型（Lite Managed）─────────────────────────────
     {
       id: "QSW-L3",
       name: "QSW-L3 Series",
-      management: "L3 Lite",
-      description: "支援靜態路由與基本 L3 轉送，適合需要跨 VLAN 路由的中型企業網路",
+      management: "Lite Managed",
+      description: "輕量網管，支援基本 VLAN 與流量監控，適合需要簡易管理的 10GbE 網路",
       models: [
         {
           model: "QSW-L3208-2C6T",
           ports: "6x 10GbE RJ45 + 2x 10GbE SFP+/RJ45 Combo",
-          features: ["10GbE", "Combo port", "L3 routing"]
+          features: ["10GbE", "Combo port"]
         },
         {
           model: "QSW-L3205-1C4T",
           ports: "4x 10GbE RJ45 + 1x 10GbE SFP+/RJ45 Combo",
-          features: ["10GbE", "Combo port", "L3 routing"]
+          features: ["10GbE", "Combo port"]
         }
       ]
     },
