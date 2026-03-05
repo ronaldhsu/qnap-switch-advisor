@@ -1,27 +1,24 @@
-# QNAP Switch Advisor 🔌
+# QNAP Switch Advisor
 
 > AI 驅動的 QNAP 交換器產品問答機器人 | AI-powered QNAP Switch product chatbot
 
-![Preview](docs/preview.png)
-
 ## 簡介 | Overview
 
-一個以 Claude AI 為核心的網頁問答機器人，專門回答 QNAP Switch 產品規格、比較與選購建議。
+以 Groq API（llama-3.3-70b-versatile）為推理引擎，搭配結構化產品資料庫，提供 QNAP Switch 產品規格、比較與選購建議的即時問答服務。
 
-An AI chatbot powered by Claude, designed to answer questions about QNAP Switch product specs, comparisons, and purchase recommendations.
-
-**Live Demo:** [GitHub Pages 部署後填入]
+A web-based AI chatbot powered by Groq API, designed to answer questions about QNAP Switch product specs, comparisons, and purchase recommendations.
 
 ---
 
 ## 功能特色 | Features
 
-- 🌐 **中英雙語介面** — 一鍵切換繁體中文 / English
-- 💬 **多輪對話記憶** — 上下文連貫，可追問細節
-- ⚡ **快速問答按鈕** — 內建常見問題，一鍵發問
-- 📊 **結構化回答** — 支援表格比較、條列規格
-- 🎨 **簡潔科技風設計** — 深色介面，無需後端伺服器
-- 📱 **響應式設計** — 適配桌面與行動裝置
+- **中英雙語介面** — 一鍵切換繁體中文 / English
+- **多輪對話記憶** — 上下文連貫，可追問細節
+- **快速問答按鈕** — 內建常見問題，一鍵發問（含「顯示所有產品」）
+- **結構化回答** — 支援表格比較、條列規格、總埠數自動計算
+- **深色科技風介面** — 簡潔設計，AI 回覆過長時自動顯示 scroll bar
+- **響應式設計** — 適配桌面與行動裝置
+- **版本徽章** — Header 顯示目前版本號，pre-commit hook 自動遞增
 
 ---
 
@@ -30,9 +27,9 @@ An AI chatbot powered by Claude, designed to answer questions about QNAP Switch 
 | 項目 | 說明 |
 |------|------|
 | 前端 | 純 HTML / CSS / Vanilla JS（無框架依賴） |
-| AI 引擎 | [Anthropic Claude API](https://docs.anthropic.com) (`claude-sonnet-4-20250514`) |
+| AI 引擎 | [Groq API](https://console.groq.com) — `llama-3.3-70b-versatile` |
 | 字型 | Google Fonts — Syne + DM Sans |
-| 部署 | GitHub Pages（靜態網頁，無需後端） |
+| 部署 | GitHub Pages / QNAP NAS Web Station |
 
 ---
 
@@ -41,87 +38,106 @@ An AI chatbot powered by Claude, designed to answer questions about QNAP Switch 
 ### 1. Clone 專案
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/qnap-switch-advisor.git
+git clone https://github.com/ronaldhsu/qnap-switch-advisor.git
 cd qnap-switch-advisor
 ```
 
 ### 2. 設定 API Key
 
-開啟 `index.html`，找到以下程式碼區段：
+建立 `config.js`（此檔已在 `.gitignore` 中，不會上傳 GitHub）：
 
 ```javascript
-const response = await fetch('https://api.anthropic.com/v1/messages', {
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json',
-    'x-api-key': 'YOUR_ANTHROPIC_API_KEY',   // ← 在這裡填入你的 API Key
-    'anthropic-version': '2023-06-01',
-    'anthropic-dangerous-direct-browser-access': 'true'
-  },
+window.GROQ_CONFIG = {
+  apiKey: '你的_Groq_API_Key'
+};
 ```
 
-> ⚠️ **安全警告**：直接在前端使用 API Key 僅適合本機測試或內部使用。正式對外部署請參考[後端代理方案](#後端代理-production)。
+> Groq API Key 免費申請：https://console.groq.com → API Keys
 
 ### 3. 開啟瀏覽器
 
-直接用瀏覽器開啟 `index.html` 即可使用。
+直接用瀏覽器開啟 `index.html` 即可使用，無需 npm 或任何後端伺服器。
 
 ---
 
-## 部署到 GitHub Pages
+## 專案結構 | Project Structure
 
-1. 將專案 push 到你的 GitHub repository
-2. 前往 **Settings → Pages**
-3. Source 選擇 `main` branch，資料夾選 `/ (root)`
-4. 儲存後等待幾分鐘，即可透過 `https://YOUR_USERNAME.github.io/qnap-switch-advisor` 訪問
+```
+qnap-switch-advisor/
+├── index.html                     # 主程式（單頁 HTML/CSS/JS）
+├── products.js                    # 結構化產品資料庫 + System Prompt 產生器
+├── config.js                      # 本機 API Key 設定（已 gitignore）
+├── .htaccess                      # Apache rewrite 規則
+├── .gitignore                     # 排除 config.js、.env 等機密檔
+├── CLAUDE.md                      # Claude Code 專案指引
+├── README.md                      # 本文件
+├── .github/
+│   └── workflows/
+│       ├── deploy.yml             # GitHub Pages 自動部署
+│       └── deploy-nas.yml         # QNAP NAS 自動部署（self-hosted runner）
+└── docs/
+    └── SOP-QNAP-Switch-Advisor.md # 使用 SOP
+```
 
 ---
 
-## 後端代理 (Production)
+## 部署 | Deployment
 
-正式對外部署時，建議透過後端代理保護 API Key：
+### GitHub Pages（自動）
+
+專案已設定 GitHub Actions，push 到 `main` 分支即自動部署：
 
 ```
-用戶瀏覽器 → 你的後端 API → Anthropic Claude API
+git push origin main
+  └─→ .github/workflows/deploy.yml 觸發
+        └─→ 部署至 GitHub Pages
 ```
 
-可使用以下平台快速建立代理服務：
-- [Cloudflare Workers](https://workers.cloudflare.com/)
-- [Vercel Edge Functions](https://vercel.com/docs/functions/edge-functions)
-- Express.js / FastAPI
+設定位置：GitHub Repo → Settings → Pages → Source: `GitHub Actions`
+
+### QNAP NAS（自動）
+
+若已在 NAS 上安裝 GitHub Actions Self-hosted Runner：
+
+```
+git push origin main
+  └─→ .github/workflows/deploy-nas.yml 觸發
+        └─→ Self-hosted Runner 執行
+              └─→ 複製至 /share/Web/qnap-switch-advisor/
+```
 
 ---
 
-## 產品知識庫 | Product Knowledge
+## 產品資料庫 | Product Database
 
-機器人內建以下 QNAP Switch 產品知識：
+產品資料獨立於 `products.js`，依 QNAP 官網分為以下 Series：
 
-| 系列 | 類型 | 代表型號 |
-|------|------|---------|
-| QSW | Unmanaged | QSW-1105-5T, QSW-2104-2T, QSW-308-1C |
-| QSW-M | Web Managed (L2) | QSW-M408-4C, QSW-M408S, QSW-M3216R-8S8T |
-| QGD | Smart Edge / NDR | QGD-1600P, QGD-1602P, QGD-3014-16PT |
-| QSW-M (Industrial) | 工業等級 | QSW-M2116P-2T2S |
+| Series | 說明 | 代表型號 |
+|--------|------|---------|
+| QSW 1000 | 全 2.5GbE 即插即用 | QSW-1108-8T-R2 |
+| QSW 2000 | 1G/2.5GbE 接取層 + 10GbE 上行 | QSW-2104-2T-R2, QSW-M2108-2C |
+| QSW 3000 | 10GbE 為主的聚合/核心層 | QSW-M3216R-8S8T |
+| QSW 5000 | 25GbE 高效能 | QSW-M5216-1T |
+| QSW 7000 | 100GbE 資料中心級 | QSW-M7308R-4X |
+| QGD | Smart Edge（QuTS hero OS） | QGD-1600P, QGD-1602P |
+
+新增或修改產品只需編輯 `products.js`，無需動 `index.html`。
+
+詳細維護流程請參考 [SOP](docs/SOP-QNAP-Switch-Advisor.md)。
 
 ---
 
-## 自訂擴充 | Customization
+## API Key 安全 | Security
 
-### 新增產品資訊
+- `config.js` 已加入 `.gitignore`，不會上傳 GitHub
+- 前端直接呼叫 Groq API，僅適合內部使用或本機測試
+- 正式對外部署建議透過後端代理保護 API Key（Cloudflare Workers / Vercel Edge Functions）
 
-編輯 `index.html` 中的 `SYSTEM_PROMPT` 常數，加入最新產品規格：
+---
 
-```javascript
-const SYSTEM_PROMPT = `You are an expert QNAP Switch product advisor...
-// 在這裡加入新產品資訊
-`;
-```
+## 文件 | Documentation
 
-### 更換 AI 模型
-
-```javascript
-model: 'claude-opus-4-20250514',  // 更換為其他模型
-```
+- **使用 SOP**：[docs/SOP-QNAP-Switch-Advisor.md](docs/SOP-QNAP-Switch-Advisor.md)
 
 ---
 
@@ -131,11 +147,4 @@ MIT License — 歡迎自由使用與修改。
 
 ---
 
-## 貢獻 | Contributing
-
-歡迎提交 Issue 或 Pull Request！
-如有新的 QNAP Switch 產品規格需要更新，請直接開 PR。
-
----
-
-*由 Claude AI 技術驅動 | Powered by Anthropic Claude*
+*Powered by [Groq](https://groq.com) — llama-3.3-70b-versatile*
