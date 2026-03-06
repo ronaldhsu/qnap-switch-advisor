@@ -444,6 +444,58 @@
     color: var(--accent);
   }
 
+  /* Sidebar quick questions (visible after chat starts) */
+  .chat-body {
+    flex: 1;
+    display: flex;
+    overflow: hidden;
+  }
+
+  .sidebar {
+    width: 220px;
+    flex-shrink: 0;
+    border-right: 1px solid var(--border);
+    padding: 16px 12px;
+    overflow-y: auto;
+    display: none;
+    flex-direction: column;
+    gap: 8px;
+    background: var(--surface);
+  }
+
+  .sidebar.visible {
+    display: flex;
+  }
+
+  .sidebar-title {
+    font-size: 11px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    padding: 0 4px 8px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 4px;
+    font-weight: 500;
+  }
+
+  .sidebar .quick-q {
+    padding: 10px 12px;
+    font-size: 12px;
+    border-radius: 8px;
+  }
+
+  .sidebar .quick-q .icon {
+    display: inline;
+    margin-right: 6px;
+    margin-bottom: 0;
+    font-size: 13px;
+  }
+
+  /* Hide sidebar on mobile */
+  @media (max-width: 768px) {
+    .sidebar { display: none !important; }
+  }
+
   /* Input area */
   .input-area {
     position: relative;
@@ -655,7 +707,12 @@
   </div>
 </header>
 
-<div class="chat-wrapper">
+<div class="chat-body">
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-title" id="sidebarTitle">快速提問</div>
+    <div id="sidebarQuickQ"></div>
+  </aside>
+  <div class="chat-wrapper">
   <div id="chat">
     <div class="welcome" id="welcome">
       <div class="welcome-badge" id="wBadge">AI 驅動產品顧問</div>
@@ -681,6 +738,7 @@
     </div>
   </div>
 </div>
+</div><!-- /chat-body -->
 
 <div class="input-area">
   <div class="input-box">
@@ -704,7 +762,7 @@
 </div>
 
 <script>
-const APP_VERSION = 'v0.00.009';
+const APP_VERSION = 'v0.00.010';
 document.getElementById('versionTag').textContent = APP_VERSION;
 
 let currentLang = 'zh';
@@ -772,6 +830,11 @@ function setLang(lang) {
     `).join('');
   }
 
+  // Update sidebar if visible
+  if (document.getElementById('sidebar').classList.contains('visible')) {
+    buildSidebarQuickQ();
+  }
+
   // Update html lang
   document.documentElement.lang = lang === 'zh' ? 'zh-TW' : 'en';
 }
@@ -800,6 +863,26 @@ function hideWelcome() {
     w.style.opacity = '0';
     w.style.transform = 'translateY(-10px)';
     setTimeout(() => w.remove(), 300);
+  }
+  showSidebar();
+}
+
+function buildSidebarQuickQ() {
+  const t = i18n[currentLang];
+  const container = document.getElementById('sidebarQuickQ');
+  document.getElementById('sidebarTitle').textContent = currentLang === 'zh' ? '快速提問' : 'Quick Questions';
+  container.innerHTML = t.questions.map(q => `
+    <div class="quick-q" onclick="askQuestion('${q.q.replace(/'/g, "\\'")}')">
+      <span class="icon">${q.icon}</span>${q.text}
+    </div>
+  `).join('');
+}
+
+function showSidebar() {
+  const sidebar = document.getElementById('sidebar');
+  if (!sidebar.classList.contains('visible')) {
+    buildSidebarQuickQ();
+    sidebar.classList.add('visible');
   }
 }
 
