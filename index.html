@@ -708,7 +708,7 @@
 </div>
 
 <script>
-const APP_VERSION = 'v0.00.007';
+const APP_VERSION = 'v0.00.008';
 document.getElementById('versionTag').textContent = APP_VERSION;
 
 let currentLang = 'zh';
@@ -924,12 +924,14 @@ function buildSystemPrompt() {
   const g10Models  = unique(byFeature('10GbE').concat(byFeature('10GbE uplink')));
   const g25Models  = unique(byFeature('25GbE'));
   const g100Models = unique(byFeature('100GbE uplink'));
+  const halfRackModels = unique(byFeature('Half Rack Mount'));
 
   const speedIndex = [
     poeModels.length  && `PoE Models: ${poeModels.join(', ')}`,
     g10Models.length  && `10GbE Models: ${g10Models.join(', ')}`,
     g25Models.length  && `25GbE Models: ${g25Models.join(', ')}`,
-    g100Models.length && `100GbE Uplink Models: ${g100Models.join(', ')}`
+    g100Models.length && `100GbE Uplink Models: ${g100Models.join(', ')}`,
+    halfRackModels.length && `Half Rack Mount Models: ${halfRackModels.join(', ')} — 可搭配配件 SP-EAR-QSW2FOR1-01 將任兩台組裝為 1U`
   ].filter(Boolean).join('\n');
 
   // 3. 系列說明（含各系列內的管理類型）
@@ -1021,9 +1023,11 @@ function isTopicRelevant(text) {
     '推薦', '建議', '比較', '差別', '差異', '規格', '選擇', '選購', '適合',
     'recommend', 'compare', 'comparison', 'difference', 'spec', 'which', 'suggest',
     'buy', 'choose', 'suitable', 'best',
-    // 部署場景
-    '機架', 'rack', 'desktop', '桌上型', '監控', 'surveillance', 'ip cam',
+    // 部署場景 / 機構
+    '機架', 'rack', 'half rack', '半rack', '1u', 'desktop', '桌上型',
+    '監控', 'surveillance', 'ip cam',
     '佈線', 'cabling', '拓撲', 'topology',
+    'mount', '配件', 'accessory', 'ear',
     // 其他相關
     '產品', 'product', 'model', '型號', '功能', 'feature',
     '價格', 'price', '保固', 'warranty',

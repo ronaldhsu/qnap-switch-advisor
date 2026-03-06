@@ -88,14 +88,16 @@ const QNAP_PRODUCTS = {
           ports: "6x 2.5GbE PoE++",
           uplink: "2x 10GbE PoE++ + 2x 10GbE SFP+",
           poe: "PoE++",
-          features: ["PoE++", "2.5GbE", "10GbE uplink"]
+          features: ["PoE++", "2.5GbE", "10GbE uplink", "Half Rack Mount"],
+          notes: "Half Rack Mount 機型，可搭配 SP-EAR-QSW2FOR1-01 配件將任兩台組裝為 1U"
         },
         {
           model: "QSW-M2106R-2S2T",
           management: "Web Managed L2",
           ports: "6x 2.5GbE",
           uplink: "2x 10GbE RJ45 + 2x 10GbE SFP+",
-          features: ["2.5GbE", "10GbE uplink", "Rack mount"]
+          features: ["2.5GbE", "10GbE uplink", "Half Rack Mount"],
+          notes: "Half Rack Mount 機型，可搭配 SP-EAR-QSW2FOR1-01 配件將任兩台組裝為 1U"
         },
         {
           model: "QSW-M2108-2C",
@@ -116,7 +118,8 @@ const QNAP_PRODUCTS = {
           management: "Web Managed L2",
           ports: "8x 2.5GbE",
           uplink: "2x 10GbE SFP+/RJ45 Combo",
-          features: ["2.5GbE", "10GbE uplink", "Combo port", "Rack mount"]
+          features: ["2.5GbE", "10GbE uplink", "Combo port", "Half Rack Mount"],
+          notes: "Half Rack Mount 機型，可搭配 SP-EAR-QSW2FOR1-01 配件將任兩台組裝為 1U"
         },
         {
           model: "QSW-M2116P-2T2S",
@@ -170,7 +173,8 @@ const QNAP_PRODUCTS = {
           model: "QSW-3216R-8S8T",
           management: "Unmanaged",
           ports: "8x 10GbE RJ45 + 8x 10GbE SFP+",
-          features: ["10GbE", "SFP+", "Rack mount"]
+          features: ["10GbE", "SFP+", "Half Rack Mount"],
+          notes: "Half Rack Mount 機型，可搭配 SP-EAR-QSW2FOR1-01 配件將任兩台組裝為 1U"
         },
         {
           model: "QSW-1208-8C",
@@ -198,13 +202,15 @@ const QNAP_PRODUCTS = {
           model: "QSW-M3212R-8S4T",
           management: "Web Managed L2",
           ports: "4x 10GbE RJ45 + 8x 10GbE SFP+",
-          features: ["10GbE", "SFP+", "Rack mount"]
+          features: ["10GbE", "SFP+", "Half Rack Mount"],
+          notes: "Half Rack Mount 機型，可搭配 SP-EAR-QSW2FOR1-01 配件將任兩台組裝為 1U"
         },
         {
           model: "QSW-M3216R-8S8T",
           management: "Web Managed L2",
           ports: "8x 10GbE RJ45 + 8x 10GbE SFP+",
-          features: ["10GbE", "SFP+", "Rack mount"]
+          features: ["10GbE", "SFP+", "Half Rack Mount"],
+          notes: "Half Rack Mount 機型，可搭配 SP-EAR-QSW2FOR1-01 配件將任兩台組裝為 1U"
         },
         {
           model: "QSW-M1208-8C",
@@ -263,8 +269,8 @@ const QNAP_PRODUCTS = {
           management: "L3 Lite Managed",
           ports: "8x 25GbE SFP28",
           uplink: "4x 100GbE QSFP28",
-          features: ["25GbE", "100GbE uplink", "Rack mount", "L3 routing"],
-          notes: "適合中小企業部署 100GbE 高速骨幹網路"
+          features: ["25GbE", "100GbE uplink", "Half Rack Mount", "L3 routing"],
+          notes: "Half Rack Mount 機型，可搭配 SP-EAR-QSW2FOR1-01 配件將任兩台組裝為 1U；適合中小企業部署 100GbE 高速骨幹網路"
         }
       ]
     },
