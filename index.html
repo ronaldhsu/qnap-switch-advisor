@@ -22,6 +22,39 @@
     --text-muted: #6b7fa3;
     --user-bubble: #0a2040;
     --ai-bubble: #0d1420;
+    /* theme-aware tokens */
+    --header-bg: rgba(8,12,20,0.95);
+    --logo-color: #ffffff;
+    --grid-color: rgba(0,212,255,0.03);
+    --th-bg: rgba(0,212,255,0.1);
+    --tag-bg: rgba(0,212,255,0.1);
+    --tag-border: rgba(0,212,255,0.2);
+    --row-hover: rgba(255,255,255,0.02);
+    --badge-bg: rgba(255,255,255,0.04);
+    --welcome-title-from: #e8f0fe;
+  }
+
+  [data-theme="light"] {
+    --bg: #f0f4fa;
+    --surface: #ffffff;
+    --surface2: #eef2fa;
+    --border: #cdd6e8;
+    --accent: #0066ff;
+    --accent2: #0044cc;
+    --accent-glow: rgba(0, 102, 255, 0.12);
+    --text: #111827;
+    --text-muted: #6b7fa3;
+    --user-bubble: #dbeafe;
+    --ai-bubble: #ffffff;
+    --header-bg: rgba(240,244,250,0.95);
+    --logo-color: #111827;
+    --grid-color: rgba(0,102,255,0.025);
+    --th-bg: rgba(0,102,255,0.08);
+    --tag-bg: rgba(0,102,255,0.08);
+    --tag-border: rgba(0,102,255,0.2);
+    --row-hover: rgba(0,0,0,0.025);
+    --badge-bg: rgba(0,0,0,0.04);
+    --welcome-title-from: #111827;
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -42,8 +75,8 @@
     position: fixed;
     inset: 0;
     background-image:
-      linear-gradient(rgba(0,212,255,0.03) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(0,212,255,0.03) 1px, transparent 1px);
+      linear-gradient(var(--grid-color) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
     background-size: 40px 40px;
     pointer-events: none;
     z-index: 0;
@@ -58,7 +91,7 @@
     justify-content: space-between;
     padding: 16px 28px;
     border-bottom: 1px solid var(--border);
-    background: rgba(8,12,20,0.95);
+    background: var(--header-bg);
     backdrop-filter: blur(12px);
   }
 
@@ -72,7 +105,7 @@
     display: flex;
     align-items: center;
     flex-shrink: 0;
-    color: white;
+    color: var(--logo-color);
   }
   .logo-icon svg {
     height: 22px;
@@ -189,7 +222,7 @@
     font-weight: 800;
     line-height: 1.2;
     margin-bottom: 12px;
-    background: linear-gradient(135deg, #e8f0fe 0%, var(--accent) 100%);
+    background: linear-gradient(135deg, var(--welcome-title-from) 0%, var(--accent) 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -401,7 +434,7 @@
   }
 
   .bubble th {
-    background: rgba(0,212,255,0.1);
+    background: var(--th-bg);
     color: var(--accent);
     padding: 7px 11px;
     text-align: left;
@@ -419,7 +452,7 @@
     vertical-align: top;
   }
 
-  .bubble tr:hover td { background: rgba(255,255,255,0.02); }
+  .bubble tr:hover td { background: var(--row-hover); }
 
   .bubble strong { color: var(--accent); font-weight: 600; }
   .bubble em { color: var(--text-muted); font-style: normal; font-size: 0.95em; }
@@ -447,8 +480,8 @@
   .bubble .tag {
     display: inline-block;
     padding: 2px 8px;
-    background: rgba(0,212,255,0.1);
-    border: 1px solid rgba(0,212,255,0.2);
+    background: var(--tag-bg);
+    border: 1px solid var(--tag-border);
     border-radius: 4px;
     font-size: 11px;
     color: var(--accent);
@@ -565,8 +598,8 @@
     position: relative;
     z-index: 10;
     padding: 16px 20px 20px;
-    background: rgba(8,12,20,0.95);
-    border-top: 1px solid var(--border);
+    background: var(--header-bg);
+    border-bottom: 1px solid var(--border);
     backdrop-filter: blur(12px);
   }
 
@@ -744,7 +777,7 @@
     font-family: monospace;
     letter-spacing: 0.5px;
     opacity: 0.55;
-    background: rgba(255,255,255,0.04);
+    background: var(--badge-bg);
     border: 1px solid var(--border);
     padding: 2px 8px;
     border-radius: 4px;
@@ -774,6 +807,28 @@
     background: rgba(255,107,107,0.08);
   }
 
+  /* Theme toggle button */
+  .theme-toggle {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text-muted);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    flex-shrink: 0;
+  }
+
+  .theme-toggle:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: var(--accent-glow);
+  }
+
 </style>
 </head>
 <body>
@@ -788,6 +843,7 @@
   </div>
   <div style="display:flex;align-items:center;gap:10px;">
     <span class="version-badge" id="versionTag"></span>
+    <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="切換亮色模式"></button>
     <button class="feedback-btn" onclick="openFeedback()">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
       意見回饋
@@ -798,6 +854,16 @@
     </div>
   </div>
 </header>
+
+<div class="input-area">
+  <div class="input-box">
+    <textarea id="userInput" rows="1" placeholder="詢問 QNAP Switch 規格、比較、推薦..." onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
+    <button id="sendBtn" onclick="sendMessage()">
+      <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+    </button>
+  </div>
+  <div class="input-hint" id="inputHint">按 Enter 送出 · Shift+Enter 換行</div>
+</div>
 
 <div class="chat-body">
   <aside class="sidebar" id="sidebar">
@@ -826,27 +892,26 @@
         <div class="quick-q" onclick="askQuestion(this.dataset.q)" data-q="請列出所有 QNAP 交換器產品">
           <span class="icon">📋</span>顯示所有產品
         </div>
+        <div class="quick-q" onclick="askQuestion(this.dataset.q)" data-q="QSW-M2108-2C 支援 VLAN 嗎？">
+          <span class="icon">🌐</span>QSW-M2108-2C 支援 VLAN 嗎？
+        </div>
+        <div class="quick-q" onclick="askQuestion(this.dataset.q)" data-q="哪些型號支援 Layer 3 Static Routing？">
+          <span class="icon">🛣️</span>哪些型號支援 Layer 3 Static Routing？
+        </div>
+        <div class="quick-q" onclick="askQuestion(this.dataset.q)" data-q="QSW-M7308R-4X 的 QoS 功能有哪些？">
+          <span class="icon">⚙️</span>QSW-M7308R-4X 的 QoS 功能？
+        </div>
       </div>
     </div>
   </div>
 </div>
 </div><!-- /chat-body -->
 
-<div class="input-area">
-  <div class="input-box">
-    <textarea id="userInput" rows="1" placeholder="詢問 QNAP Switch 規格、比較、推薦..." onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
-    <button id="sendBtn" onclick="sendMessage()">
-      <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
-    </button>
-  </div>
-  <div class="input-hint" id="inputHint">按 Enter 送出 · Shift+Enter 換行</div>
-</div>
-
 <!-- API Key Modal (for GitHub Pages / no config.js) -->
 <div class="modal-overlay hidden" id="apiModal">
   <div class="modal-box">
     <h2>🔑 設定 Groq API Key</h2>
-    <p>未偵測到本機 <code style="font-size:11px;background:rgba(0,212,255,0.1);padding:1px 5px;border-radius:3px;color:var(--accent)">config.js</code>，請輸入您的 Groq API Key 以啟用 AI 功能。<br>
+    <p>未偵測到本機 <code style="font-size:11px;background:var(--th-bg);padding:1px 5px;border-radius:3px;color:var(--accent)">config.js</code>，請輸入您的 Groq API Key 以啟用 AI 功能。<br>
     取得 Key：<a href="https://console.groq.com" target="_blank">console.groq.com</a>（免費）</p>
     <input type="password" class="modal-input" id="apiKeyInput" placeholder="gsk_...">
     <button class="modal-btn" onclick="saveApiKey()">儲存並繼續</button>
@@ -856,8 +921,36 @@
 <!-- Feedback Modal removed: opens Google Form directly -->
 
 <script>
-const APP_VERSION = 'v0.00.016';
+const APP_VERSION = 'v0.00.020';
 document.getElementById('versionTag').textContent = APP_VERSION;
+
+/* ── Theme toggle ────────────────────────────────────────── */
+const MOON_SVG = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>`;
+const SUN_SVG  = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>`;
+
+function applyTheme(theme) {
+  if (theme === 'light') {
+    document.documentElement.setAttribute('data-theme', 'light');
+  } else {
+    document.documentElement.removeAttribute('data-theme');
+  }
+  const btn = document.getElementById('themeToggle');
+  if (btn) {
+    btn.innerHTML = theme === 'light' ? MOON_SVG : SUN_SVG;
+    btn.title = theme === 'light' ? '切換深色模式' : '切換亮色模式';
+  }
+}
+
+function toggleTheme() {
+  const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+  const next = isLight ? 'dark' : 'light';
+  applyTheme(next);
+  localStorage.setItem('theme', next);
+}
+
+// Apply saved preference on load
+applyTheme(localStorage.getItem('theme') || 'dark');
+/* ── End theme toggle ────────────────────────────────────── */
 
 let currentLang = 'zh';
 let conversationHistory = [];
@@ -876,7 +969,10 @@ const i18n = {
       { icon: '🚀', text: '10GbE 交換器有哪些型號？', q: '10GbE 交換器有哪些型號？' },
       { icon: '💡', text: '我需要 8 埠 PoE 交換器，推薦哪款？', q: '我需要 8 埠 PoE 交換器，推薦哪款？' },
       { icon: '🔍', text: 'QSW-M408 vs QSW-M3216R 差別？', q: 'QSW-M408-4C 和 QSW-M3216R-8S8T 有什麼差別？' },
-      { icon: '📋', text: '顯示所有產品', q: '請列出所有 QNAP 交換器產品' }
+      { icon: '📋', text: '顯示所有產品', q: '請列出所有 QNAP 交換器產品' },
+      { icon: '🌐', text: 'QSW-M2108-2C 支援 VLAN 嗎？', q: 'QSW-M2108-2C 支援 VLAN 嗎？' },
+      { icon: '🛣️', text: '哪些型號支援 L3 Static Routing？', q: '哪些型號支援 Layer 3 Static Routing？' },
+      { icon: '⚙️', text: 'QSW-M7308R-4X 的 QoS 功能？', q: 'QSW-M7308R-4X 的 QoS 功能有哪些？' }
     ],
     you: '你',
     userAvatar: 'U',
@@ -894,7 +990,10 @@ const i18n = {
       { icon: '🚀', text: 'What are the 10GbE models?', q: 'What 10GbE switch models does QNAP offer?' },
       { icon: '💡', text: 'Recommend an 8-port PoE switch', q: 'I need an 8-port PoE switch. Which QNAP model do you recommend?' },
       { icon: '🔍', text: 'QSW-M408 vs QSW-M3216R?', q: 'What is the difference between QSW-M408-4C and QSW-M3216R-8S8T?' },
-      { icon: '📋', text: 'Show all products', q: 'Please list all QNAP switch products' }
+      { icon: '📋', text: 'Show all products', q: 'Please list all QNAP switch products' },
+      { icon: '🌐', text: 'Does QSW-M2108-2C support VLAN?', q: 'Does QSW-M2108-2C support VLAN?' },
+      { icon: '🛣️', text: 'Which models support L3 Static Routing?', q: 'Which models support Layer 3 Static Routing?' },
+      { icon: '⚙️', text: 'QSW-M7308R-4X QoS features?', q: 'What are the QoS features of QSW-M7308R-4X?' }
     ],
     you: 'You',
     userAvatar: 'U',
@@ -993,7 +1092,7 @@ function appendMessage(role, text) {
   // Basic markdown rendering
   content = content
     .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-    .replace(/`([^`]+)`/g, '<code style="background:rgba(0,212,255,0.1);padding:1px 5px;border-radius:3px;font-size:0.9em;color:var(--accent)">$1</code>')
+    .replace(/`([^`]+)`/g, '<code style="background:var(--th-bg);padding:1px 5px;border-radius:3px;font-size:0.9em;color:var(--accent)">$1</code>')
     .replace(/^### (.+)$/gm, '<h3>$1</h3>')
     .replace(/^## (.+)$/gm, '<h3>$1</h3>')
     .replace(/^- (.+)$/gm, '<li>$1</li>')
@@ -1129,6 +1228,15 @@ function buildSystemPrompt() {
     return `- ${s.name} (${types}) — ${s.description}`;
   }).join('\n');
 
+  // 4. 軟體規格摘要（每型號 key features）
+  const swSpecs = QNAP_PRODUCTS.softwareSpecs || {};
+  const swLines = Object.entries(swSpecs).map(([model, spec]) => {
+    const parts = Object.entries(spec)
+      .filter(([k]) => ['QoS','VLAN','Layer 2 Features','Layer 3 Features','Security','HA (High Availability)'].includes(k))
+      .map(([k, v]) => `${k}: ${v}`).join(' | ');
+    return `- ${model}: ${parts}`;
+  }).join('\n');
+
   return `You are an expert QNAP Switch product advisor. You have comprehensive knowledge of all QNAP Switch products including their specifications, features, and use cases.
 
 Key QNAP Switch product lines:
@@ -1139,17 +1247,41 @@ ${speedIndex}
 Management Types:
 ${mgmtLines}
 
+Software Features by Model (Port Management / QoS / VLAN / Layer 2 / Layer 3 / Security):
+${swLines}
+
+Full software spec for any model is available in QNAP_PRODUCTS.softwareSpecs[model]. When a user asks about software features of a specific model, look up its complete spec from that data and present it in a table.
+
 LANGUAGE RULE (STRICT):
 - If the user writes in Chinese, you MUST reply in Traditional Chinese (繁體中文) ONLY.
 - NEVER use Simplified Chinese (简体字). Always use Traditional Chinese characters: 繁體、台灣、網路、軟體、硬體、檔案、視窗、設定、功能、連接埠、規格、選購、推薦 etc.
 - If the user writes in English, reply in English.
 
-When comparing products, always use a markdown table. Include these rows (when applicable): 總埠數, 接取埠, 上行埠, 管理型態, PoE. Every row (header and data) MUST start and end with a pipe character |. Example:
+TABLE RULE (MANDATORY):
+Whenever your response includes ANY information about one or more QNAP Switch models — including recommendations, single-model introductions, feature overviews, spec lookups, comparisons, or product listings — you MUST present that information in a markdown table.
+- Every row (header and data) MUST start and end with a pipe character |.
+- For a single model, use a two-column "spec | value" table.
+- For multiple models, use a multi-column comparison table with models as columns.
+- Columns to include (when applicable): 型號, 總埠數, 接取埠, 上行埠, 管理型態, PoE, 特色
+- Do NOT list switch specs as plain text or bullet points. Always use a table.
+
+Example — single model:
+| 規格 | QSW-M2108-2C |
+|------|-------------|
+| 總埠數 | 8x 2.5GbE + 2x 10GbE |
+| 接取埠 | 8x 2.5GbE RJ45 |
+| 上行埠 | 2x 10GbE SFP+/RJ45 Combo |
+| 管理型態 | 網頁管理 |
+| PoE | 無 |
+
+Example — multiple models:
 | 規格 | 型號A | 型號B |
 |------|-------|-------|
 | 總埠數 | 8x 2.5GbE + 2x 10GbE SFP+ | 4x 2.5GbE + 2x 10GbE RJ45 |
 | 接取埠 | 8x 2.5GbE | 4x 2.5GbE |
 | 上行埠 | 2x 10GbE SFP+ | 2x 10GbE RJ45 |
+| 管理型態 | 網頁管理 | 智慧型 |
+
 When recommending, ask about use case if not clear, or give top 2-3 suggestions with reasoning.
 Keep responses concise and practical for general consumers.
 
