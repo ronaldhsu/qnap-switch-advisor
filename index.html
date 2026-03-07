@@ -878,20 +878,20 @@
       <h1 id="wTitle">QNAP Switch<br>找到完美的交換器</h1>
       <p id="wDesc">詢問任何關於 QNAP 交換器產品的問題——規格比較、PoE 支援、10GbE 型號，或購買建議，我都能幫你解答。</p>
       <div class="quick-questions" id="quickQ">
-        <div class="quick-q" onclick="askQuestion(this.dataset.q)" data-q="哪些型號支援 PoE+？">
-          <span class="icon">⚡</span>哪些型號支援 PoE+？
+        <div class="quick-q" onclick="askQuestion(this.dataset.q)" data-q="請列出所有 QNAP 交換器產品">
+          <span class="icon">📋</span>顯示所有產品
         </div>
         <div class="quick-q" onclick="askQuestion(this.dataset.q)" data-q="10GbE 交換器有哪些型號？">
           <span class="icon">🚀</span>10GbE 交換器有哪些型號？
+        </div>
+        <div class="quick-q" onclick="askQuestion(this.dataset.q)" data-q="哪些型號支援 PoE+？">
+          <span class="icon">⚡</span>哪些型號支援 PoE+？
         </div>
         <div class="quick-q" onclick="askQuestion(this.dataset.q)" data-q="我需要 8 埠 PoE 交換器，推薦哪款？">
           <span class="icon">💡</span>我需要 8 埠 PoE 交換器，推薦哪款？
         </div>
         <div class="quick-q" onclick="askQuestion(this.dataset.q)" data-q="QSW-M408-4C 和 QSW-M3216R-8S8T 有什麼差別？">
           <span class="icon">🔍</span>QSW-M408 vs QSW-M3216R 差別？
-        </div>
-        <div class="quick-q" onclick="askQuestion(this.dataset.q)" data-q="請列出所有 QNAP 交換器產品">
-          <span class="icon">📋</span>顯示所有產品
         </div>
         <div class="quick-q" onclick="askQuestion(this.dataset.q)" data-q="QSW-M2108-2C 支援 VLAN 嗎？">
           <span class="icon">🌐</span>QSW-M2108-2C 支援 VLAN 嗎？
@@ -902,6 +902,9 @@
         <div class="quick-q" onclick="askQuestion(this.dataset.q)" data-q="QSW-M7308R-4X 的 QoS 功能有哪些？">
           <span class="icon">⚙️</span>QSW-M7308R-4X 的 QoS 功能？
         </div>
+        <div class="quick-q" onclick="askQuestion(this.dataset.q)" data-q="PoE 交換器可以接非 PoE 裝置嗎？">
+          <span class="icon">🔌</span>PoE 交換器可以接非 PoE 裝置嗎？
+        </div>
         <div class="quick-q" onclick="askQuestion(this.dataset.q)" data-q="Qfinder 偵測不到交換器怎麼辦？">
           <span class="icon">🔎</span>Qfinder 偵測不到交換器？
         </div>
@@ -910,9 +913,6 @@
         </div>
         <div class="quick-q" onclick="askQuestion(this.dataset.q)" data-q="QSW-M7308R-4X 如何設定 FEC？">
           <span class="icon">🔧</span>QSW-M7308R-4X 如何設定 FEC？
-        </div>
-        <div class="quick-q" onclick="askQuestion(this.dataset.q)" data-q="PoE 交換器可以接非 PoE 裝置嗎？">
-          <span class="icon">🔌</span>PoE 交換器可以接非 PoE 裝置嗎？
         </div>
       </div>
     </div>
@@ -978,18 +978,18 @@ const i18n = {
     placeholder: '詢問 QNAP Switch 規格、比較、推薦...',
     hint: '按 Enter 送出 · Shift+Enter 換行',
     questions: [
-      { icon: '⚡', text: '哪些型號支援 PoE+？', q: '哪些型號支援 PoE+？' },
+      { icon: '📋', text: '顯示所有產品', q: '請列出所有 QNAP 交換器產品' },
       { icon: '🚀', text: '10GbE 交換器有哪些型號？', q: '10GbE 交換器有哪些型號？' },
+      { icon: '⚡', text: '哪些型號支援 PoE+？', q: '哪些型號支援 PoE+？' },
       { icon: '💡', text: '我需要 8 埠 PoE 交換器，推薦哪款？', q: '我需要 8 埠 PoE 交換器，推薦哪款？' },
       { icon: '🔍', text: 'QSW-M408 vs QSW-M3216R 差別？', q: 'QSW-M408-4C 和 QSW-M3216R-8S8T 有什麼差別？' },
-      { icon: '📋', text: '顯示所有產品', q: '請列出所有 QNAP 交換器產品' },
       { icon: '🌐', text: 'QSW-M2108-2C 支援 VLAN 嗎？', q: 'QSW-M2108-2C 支援 VLAN 嗎？' },
       { icon: '🛣️', text: '哪些型號支援 L3 Static Routing？', q: '哪些型號支援 Layer 3 Static Routing？' },
       { icon: '⚙️', text: 'QSW-M7308R-4X 的 QoS 功能？', q: 'QSW-M7308R-4X 的 QoS 功能有哪些？' },
+      { icon: '🔌', text: 'PoE 可以接非 PoE 裝置嗎？', q: 'PoE 交換器可以接非 PoE 裝置嗎？' },
       { icon: '🔎', text: 'Qfinder 偵測不到交換器？', q: 'Qfinder 偵測不到交換器怎麼辦？' },
       { icon: '🔄', text: '如何重設 QSW-M 交換器？', q: '如何重設 QSW-M 交換器？' },
-      { icon: '🔧', text: 'QSW-M7308R-4X 如何設定 FEC？', q: 'QSW-M7308R-4X 如何設定 FEC？' },
-      { icon: '🔌', text: 'PoE 可以接非 PoE 裝置嗎？', q: 'PoE 交換器可以接非 PoE 裝置嗎？' }
+      { icon: '🔧', text: 'QSW-M7308R-4X 如何設定 FEC？', q: 'QSW-M7308R-4X 如何設定 FEC？' }
     ],
     you: '你',
     userAvatar: 'U',
@@ -1003,18 +1003,18 @@ const i18n = {
     placeholder: 'Ask about QNAP Switch specs, comparisons, recommendations...',
     hint: 'Press Enter to send · Shift+Enter for new line',
     questions: [
-      { icon: '⚡', text: 'Which models support PoE+?', q: 'Which QNAP switch models support PoE+?' },
+      { icon: '📋', text: 'Show all products', q: 'Please list all QNAP switch products' },
       { icon: '🚀', text: 'What are the 10GbE models?', q: 'What 10GbE switch models does QNAP offer?' },
+      { icon: '⚡', text: 'Which models support PoE+?', q: 'Which QNAP switch models support PoE+?' },
       { icon: '💡', text: 'Recommend an 8-port PoE switch', q: 'I need an 8-port PoE switch. Which QNAP model do you recommend?' },
       { icon: '🔍', text: 'QSW-M408 vs QSW-M3216R?', q: 'What is the difference between QSW-M408-4C and QSW-M3216R-8S8T?' },
-      { icon: '📋', text: 'Show all products', q: 'Please list all QNAP switch products' },
       { icon: '🌐', text: 'Does QSW-M2108-2C support VLAN?', q: 'Does QSW-M2108-2C support VLAN?' },
       { icon: '🛣️', text: 'Which models support L3 Static Routing?', q: 'Which models support Layer 3 Static Routing?' },
       { icon: '⚙️', text: 'QSW-M7308R-4X QoS features?', q: 'What are the QoS features of QSW-M7308R-4X?' },
+      { icon: '🔌', text: 'Non-PoE device on PoE switch?', q: 'Can I connect a non-PoE device to a PoE switch?' },
       { icon: '🔎', text: 'Qfinder can\'t detect switch?', q: 'Qfinder cannot detect my QSW switch, what should I do?' },
       { icon: '🔄', text: 'How to reset QSW-M switch?', q: 'How to reset a QSW-M switch?' },
-      { icon: '🔧', text: 'How to set FEC on QSW-M7308R-4X?', q: 'How to configure FEC on QSW-M7308R-4X?' },
-      { icon: '🔌', text: 'Non-PoE device on PoE switch?', q: 'Can I connect a non-PoE device to a PoE switch?' }
+      { icon: '🔧', text: 'How to set FEC on QSW-M7308R-4X?', q: 'How to configure FEC on QSW-M7308R-4X?' }
     ],
     you: 'You',
     userAvatar: 'U',
