@@ -1028,12 +1028,16 @@ function setLang(lang) {
   document.getElementById('btnEn').classList.toggle('active', lang === 'en');
   const t = i18n[lang];
   document.getElementById('logoSub').textContent = t.logoSub;
-  document.getElementById('wBadge').textContent = t.badge;
-  const titleLines = t.title.split('\n');
-  document.getElementById('wTitle').innerHTML = titleLines.join('<br>');
-  document.getElementById('wDesc').textContent = t.desc;
   document.getElementById('userInput').placeholder = t.placeholder;
   document.getElementById('inputHint').textContent = t.hint;
+
+  // Welcome screen elements (may be removed after chat starts)
+  const wBadge = document.getElementById('wBadge');
+  const wTitle = document.getElementById('wTitle');
+  const wDesc  = document.getElementById('wDesc');
+  if (wBadge) wBadge.textContent = t.badge;
+  if (wTitle) { const titleLines = t.title.split('\n'); wTitle.innerHTML = titleLines.join('<br>'); }
+  if (wDesc)  wDesc.textContent = t.desc;
 
   const qContainer = document.getElementById('quickQ');
   if (qContainer) {
@@ -1044,8 +1048,9 @@ function setLang(lang) {
     `).join('');
   }
 
-  // Update sidebar if visible
-  if (document.getElementById('sidebar').classList.contains('visible')) {
+  // Always update sidebar if visible
+  const sidebar = document.getElementById('sidebar');
+  if (sidebar && sidebar.classList.contains('visible')) {
     buildSidebarQuickQ();
   }
 
