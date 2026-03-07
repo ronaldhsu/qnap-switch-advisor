@@ -329,10 +329,74 @@
     background: var(--text-muted);
   }
 
+  .bubble .table-scroll-outer {
+    position: relative;
+    margin: 10px 0;
+  }
+
+  .bubble .table-scroll-outer::before,
+  .bubble .table-scroll-outer::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 6px;
+    width: 48px;
+    pointer-events: none;
+    z-index: 2;
+    opacity: 0;
+    transition: opacity 0.25s;
+  }
+
+  .bubble .table-scroll-outer::before {
+    left: 0;
+    background: linear-gradient(to right, var(--ai-bubble) 20%, transparent);
+  }
+
+  .bubble .table-scroll-outer::after {
+    right: 0;
+    background: linear-gradient(to left, var(--ai-bubble) 20%, transparent);
+  }
+
+  .bubble .table-scroll-outer.show-left::before { opacity: 1; }
+  .bubble .table-scroll-outer.show-right::after  { opacity: 1; }
+
+  /* 右側箭頭提示（初始可捲動時顯示） */
+  .bubble .table-scroll-outer.show-right::after {
+    content: '';
+  }
+
+  .bubble .table-scroll-hint {
+    display: none;
+    text-align: right;
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 3px;
+    opacity: 0.7;
+    letter-spacing: 0.3px;
+  }
+
+  .bubble .table-scroll-outer.show-right .table-scroll-hint,
+  .bubble .table-scroll-outer.show-left  .table-scroll-hint {
+    display: block;
+  }
+
+  .bubble .table-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+  }
+
+  .bubble .table-wrap::-webkit-scrollbar { height: 5px; }
+  .bubble .table-wrap::-webkit-scrollbar-track { background: transparent; }
+  .bubble .table-wrap::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  .bubble .table-wrap::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
   .bubble table {
     border-collapse: collapse;
-    width: 100%;
-    margin: 10px 0;
+    width: max-content;
+    min-width: 100%;
+    margin: 0;
     font-size: 13px;
   }
 
@@ -686,6 +750,30 @@
     border-radius: 4px;
     user-select: none;
   }
+
+  /* Feedback button */
+  .feedback-btn {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 6px 12px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text-muted);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .feedback-btn:hover {
+    border-color: #ff6b6b;
+    color: #ff6b6b;
+    background: rgba(255,107,107,0.08);
+  }
+
 </style>
 </head>
 <body>
@@ -698,8 +786,12 @@
       <div class="logo-sub" id="logoSub">AI 產品顧問 · 即時解答</div>
     </div>
   </div>
-  <div style="display:flex;align-items:center;gap:14px;">
+  <div style="display:flex;align-items:center;gap:10px;">
     <span class="version-badge" id="versionTag"></span>
+    <button class="feedback-btn" onclick="openFeedback()">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      意見回饋
+    </button>
     <div class="lang-toggle">
       <button class="lang-btn active" id="btnZh" onclick="setLang('zh')">繁中</button>
       <button class="lang-btn" id="btnEn" onclick="setLang('en')">EN</button>
@@ -761,8 +853,10 @@
   </div>
 </div>
 
+<!-- Feedback Modal removed: opens Google Form directly -->
+
 <script>
-const APP_VERSION = 'v0.00.010';
+const APP_VERSION = 'v0.00.016';
 document.getElementById('versionTag').textContent = APP_VERSION;
 
 let currentLang = 'zh';
@@ -922,13 +1016,13 @@ function appendMessage(role, text) {
           rows.push(lines[i]);
           i++;
         }
-        let html = '<table>';
+        let html = '<div class="table-scroll-outer"><div class="table-wrap"><table>';
         rows.forEach((row, idx) => {
           const cells = row.trim().replace(/^\||\|$/g, '').split('|').map(c => c.trim());
           const tag = idx === 0 ? 'th' : 'td';
           html += '<tr>' + cells.map(c => `<${tag}>${c}</${tag}>`).join('') + '</tr>';
         });
-        html += '</table>';
+        html += '</table></div><div class="table-scroll-hint">← 左右滑動查看更多 →</div></div>';
         out.push(html);
         continue;
       }
@@ -953,7 +1047,23 @@ function appendMessage(role, text) {
   `;
   chat.appendChild(div);
   chat.scrollTop = chat.scrollHeight;
+  initTableScrollHints(div);
   return div;
+}
+
+function initTableScrollHints(msgDiv) {
+  msgDiv.querySelectorAll('.table-scroll-outer').forEach(outer => {
+    const wrap = outer.querySelector('.table-wrap');
+    if (!wrap) return;
+    function update() {
+      const canLeft  = wrap.scrollLeft > 1;
+      const canRight = wrap.scrollLeft + wrap.clientWidth < wrap.scrollWidth - 1;
+      outer.classList.toggle('show-left',  canLeft);
+      outer.classList.toggle('show-right', canRight);
+    }
+    wrap.addEventListener('scroll', update);
+    requestAnimationFrame(update);
+  });
 }
 
 function showTyping() {
@@ -1029,7 +1139,11 @@ ${speedIndex}
 Management Types:
 ${mgmtLines}
 
-Always respond in the same language as the user's question (Traditional Chinese or English).
+LANGUAGE RULE (STRICT):
+- If the user writes in Chinese, you MUST reply in Traditional Chinese (繁體中文) ONLY.
+- NEVER use Simplified Chinese (简体字). Always use Traditional Chinese characters: 繁體、台灣、網路、軟體、硬體、檔案、視窗、設定、功能、連接埠、規格、選購、推薦 etc.
+- If the user writes in English, reply in English.
+
 When comparing products, always use a markdown table. Include these rows (when applicable): 總埠數, 接取埠, 上行埠, 管理型態, PoE. Every row (header and data) MUST start and end with a pipe character |. Example:
 | 規格 | 型號A | 型號B |
 |------|-------|-------|
@@ -1072,6 +1186,13 @@ function saveApiKey() {
 
 function showApiModal() {
   document.getElementById('apiModal').classList.remove('hidden');
+}
+
+// --- Feedback / Google Forms ---
+const FEEDBACK_FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSfwphvf6unaVZtoMaMZYiYdqpKwYhaKsyN68S35mFTkWkyz2Q/viewform';
+
+function openFeedback() {
+  window.open(FEEDBACK_FORM_URL, '_blank');
 }
 
 // 頁面載入時：若無 key 則顯示 modal
